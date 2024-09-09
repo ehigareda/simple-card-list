@@ -7,7 +7,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 //implement the CORS config
-
+const cors =  require('cors');
+app.use(cors());
 //products array
 let products = [
     { id: 1, name: 'Product 1', description: 'description 1', price: 100, imageUrl: '' },
@@ -25,12 +26,17 @@ const fetchImageUrl = () => {
 
 //implement the get api for getting products
 app.get('/api/products', (req, res) => {
-
+    products = products.map(product => ({
+        ...product,
+        imageUrl: fetchImageUrl()
+    }));
+    res.json(products);
 });
 
 //implement the delete api for deleting a product by Id
 app.delete('/api/products/:id', (req, res) => {
-    
+    products = products.filter(product => product.id !== parseInt(req.params.id));
+    res.status(204).send();
 });
 
 app.listen(PORT, () => {
